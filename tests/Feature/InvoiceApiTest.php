@@ -92,4 +92,26 @@ class InvoiceApiTest extends TestCase
             ->assertJsonPath('items.0.lineTotal', '23.00')
             ->assertJsonPath('items.1.lineTotal', '10.00');
     }
+
+    public function test_provided_invoice_number_still_advances_daily_sequence(): void
+    {
+        $preview = $this->getJson('/api/invoices/next-number?issueDate=2026-02-22')
+            ->assertOk()
+            ->json('invoiceNumber');
+
+        $this->assertSame('2026022201', $preview);
+
+        $this->postJson('/api/invoices', [
+            'invoice_number' => $preview,
+            'language' => 'en',
+            'issue_date' => '2026-02-22',
+            'items' => [
+                ['description' => 'Service', 'qty' => 1, 'unitPrice' => 50, 'taxable' => true],
+            ],
+        ])->assertCreated();
+
+        $this->getJson('/api/invoices/next-number?issueDate=2026-02-22')
+            ->assertOk()
+            ->assertJsonPath('invoiceNumber', '2026022202');
+    }
 }

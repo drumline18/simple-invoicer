@@ -134,7 +134,7 @@ export default function InvoicePdfPreview({ invoice, settings }) {
               <td>{line(item.description)}</td>
               <td className="num">{item.qty}</td>
               <td className="num">{moneyFromCents(item.unitPriceCents)}</td>
-              <td className="num">{moneyFromCents(item.lineTotalCents)}</td>
+              <td className="num">{moneyFromCents(item.lineSubtotalCents)}</td>
             </tr>
           ))}
         </tbody>

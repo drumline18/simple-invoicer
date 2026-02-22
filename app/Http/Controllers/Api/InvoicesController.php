@@ -111,6 +111,8 @@ class InvoicesController extends Controller
                     ]);
                 }
 
+                $this->service->syncSequenceFromInvoiceNumber($issueDate, $invoiceNumber);
+
                 return $invoice->load(['items' => fn ($query) => $query->orderBy('position')]);
             });
         } catch (\Illuminate\Database\UniqueConstraintViolationException $exception) {

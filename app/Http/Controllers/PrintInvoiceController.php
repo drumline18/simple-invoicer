@@ -60,7 +60,7 @@ class PrintInvoiceController extends Controller
                 'description' => $item->description,
                 'qty' => $item->qty,
                 'unitPrice' => $service->dollarsFromCents((int) $item->unit_price_cents),
-                'lineTotal' => $service->dollarsFromCents((int) $item->line_total_cents),
+                'lineTotal' => $service->dollarsFromCents((int) $item->line_subtotal_cents),
             ];
         });
 

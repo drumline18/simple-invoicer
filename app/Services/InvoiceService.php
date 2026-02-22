@@ -58,6 +58,41 @@ class InvoiceService
         });
     }
 
+    public function syncSequenceFromInvoiceNumber(string $issueDate, string $invoiceNumber): void
+    {
+        $sequenceDate = str_replace('-', '', $issueDate);
+        $trimmed = trim($invoiceNumber);
+
+        if (! str_starts_with($trimmed, $sequenceDate)) {
+            return;
+        }
+
+        $suffix = substr($trimmed, strlen($sequenceDate));
+        if ($suffix === '' || ! ctype_digit($suffix)) {
+            return;
+        }
+
+        $seqValue = (int) $suffix;
+        if ($seqValue < 1) {
+            return;
+        }
+
+        $row = DailySequence::query()->lockForUpdate()->find($sequenceDate);
+        if (! $row) {
+            DailySequence::query()->create([
+                'sequence_date' => $sequenceDate,
+                'last_seq' => $seqValue,
+            ]);
+
+            return;
+        }
+
+        if ((int) $row->last_seq < $seqValue) {
+            $row->last_seq = $seqValue;
+            $row->save();
+        }
+    }
+
     public function recalcInvoice(array $items): array
     {
         $normalized = [];
