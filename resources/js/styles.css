@@ -332,6 +332,24 @@ th {
   font-size: 1.05rem;
 }
 
+.notes-terms-tools {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.6rem 0;
+}
+
+.notes-terms-tools button {
+  width: auto;
+}
+
+.inline-quiet {
+  width: auto;
+  margin-top: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
 .notice {
   min-height: 1.2rem;
   color: var(--muted);

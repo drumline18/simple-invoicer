@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Plus, Printer, Save, Trash2 } from "lucide-react";
+import { FileText, Plus, Printer, Save, StickyNote, Trash2 } from "lucide-react";
 import { fmtCad, recalcInvoice, toNumber } from "../lib/invoiceMath";
 
 function ItemRow({ item, index, onItemChange, onRemoveItem }) {
@@ -66,7 +66,21 @@ export default function InvoiceEditor({
   const totals = recalcInvoice(invoice.items);
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
+  const [showNotes, setShowNotes] = useState(Boolean(String(invoice.notes || "").trim()));
+  const [showTerms, setShowTerms] = useState(Boolean(String(invoice.terms || "").trim()));
   const suggestionWrapRef = useRef(null);
+
+  useEffect(() => {
+    if (String(invoice.notes || "").trim()) {
+      setShowNotes(true);
+    }
+  }, [invoice.notes]);
+
+  useEffect(() => {
+    if (String(invoice.terms || "").trim()) {
+      setShowTerms(true);
+    }
+  }, [invoice.terms]);
 
   const filteredClients = useMemo(() => {
     const source = Array.isArray(clients) ? clients : [];
@@ -368,23 +382,50 @@ export default function InvoiceEditor({
             <div className="grand"><span>Total</span><strong>{fmtCad(totals.total)}</strong></div>
           </div>
 
-          <label>
-            Notes
-            <textarea
-              rows="3"
-              value={invoice.notes}
-              onChange={(event) => updateField("notes", event.target.value)}
-            />
-          </label>
+          <div className="notes-terms-tools">
+            {!showNotes ? (
+              <button type="button" className="with-icon" onClick={() => setShowNotes(true)}>
+                <StickyNote size={16} aria-hidden="true" />
+                Add notes
+              </button>
+            ) : null}
+            {!showTerms ? (
+              <button type="button" className="with-icon" onClick={() => setShowTerms(true)}>
+                <FileText size={16} aria-hidden="true" />
+                Add terms
+              </button>
+            ) : null}
+          </div>
 
-          <label>
-            Terms
-            <textarea
-              rows="3"
-              value={invoice.terms}
-              onChange={(event) => updateField("terms", event.target.value)}
-            />
-          </label>
+          {showNotes ? (
+            <label>
+              Notes
+              <textarea
+                rows="3"
+                value={invoice.notes}
+                onChange={(event) => updateField("notes", event.target.value)}
+              />
+              <button type="button" className="inline-quiet with-icon" onClick={() => setShowNotes(false)}>
+                <StickyNote size={14} aria-hidden="true" />
+                Hide notes
+              </button>
+            </label>
+          ) : null}
+
+          {showTerms ? (
+            <label>
+              Terms
+              <textarea
+                rows="3"
+                value={invoice.terms}
+                onChange={(event) => updateField("terms", event.target.value)}
+              />
+              <button type="button" className="inline-quiet with-icon" onClick={() => setShowTerms(false)}>
+                <FileText size={14} aria-hidden="true" />
+                Hide terms
+              </button>
+            </label>
+          ) : null}
         </form>
         {notice ? (
           <p className={`notice-pill ${noticeTone || "info"}`}>{notice}</p>
