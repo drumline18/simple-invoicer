@@ -1,64 +1,38 @@
-# Simple Invoicer (Laravel + React)
+# Simple Invoicer
 
-Local-only invoicing app for CAD invoices with GST/QST calculations.
+Local-only invoicing app (Laravel API + React SPA) for CAD invoices with GST/QST.
 
 ## Stack
 
-- Laravel API backend
-- React SPA frontend (Vite)
-- SQLite database
+- Backend: Laravel 12
+- Frontend: React 18 + Vite
+- Database: SQLite
 
 ## Core Behavior
 
 - Currency is CAD only
-- GST is 5% and QST is 9.975%
-- Invoice numbering format is `YYYYMMDDXX` (sequence can extend beyond `99`)
-- Client quick fill is optional and uses minimal saved client records
-- Clients are archived/restored (not hard deleted)
-- Export is browser-print HTML at `/print/invoice/{id}`
-- Export language is selected per invoice (`en` or `fr`)
+- Taxes: GST 5%, QST 9.975%
+- Invoice number format: `YYYYMMDDXX` (supports `...100`, `...101`, etc.)
+- Client quick-fill from saved clients
+- Client records are archived/restored (not hard deleted)
+- Export is browser print route: `/print/invoice/{id}`
+- Export language is per-invoice (`en` / `fr`), app UI remains English
+- Empty notes/terms are hidden in export/print view
 
 ## Setup
 
-1. Install PHP dependencies:
-
 ```bash
 composer install
-```
-
-2. Install frontend dependencies:
-
-```bash
 npm install
-```
-
-3. Create environment file if needed:
-
-```bash
 copy .env.example .env
-```
-
-4. Generate app key:
-
-```bash
 php artisan key:generate
-```
-
-5. Ensure SQLite file exists:
-
-```bash
-type nul > database\\database.sqlite
-```
-
-6. Run migrations:
-
-```bash
+type nul > database\database.sqlite
 php artisan migrate
 ```
 
-## Development
+## Run Locally
 
-Run backend and frontend in separate terminals:
+Use two terminals:
 
 ```bash
 php artisan serve
@@ -68,14 +42,32 @@ php artisan serve
 npm run dev
 ```
 
-Open the app at the Laravel URL shown by `php artisan serve`.
+Open the app at the URL shown by `php artisan serve`.
 
-## Build / Test
+## Build and Test
 
 ```bash
 npm run build
-```
-
-```bash
 php artisan test
 ```
+
+## Production Notes
+
+- Web root must point to `public/`
+- Run a production frontend build (`npm run build`)
+- Ensure `storage/` and `bootstrap/cache/` are writable
+- If React/Vite dev preamble errors appear, clear stale hot mode:
+
+```bash
+del public\hot
+php artisan optimize:clear
+```
+
+## Key Paths
+
+- API routes: `routes/api.php`
+- Web routes: `routes/web.php`
+- Invoice logic: `app/Services/InvoiceService.php`
+- API controllers: `app/Http/Controllers/Api/`
+- Print/export controller: `app/Http/Controllers/PrintInvoiceController.php`
+- SPA entry: `resources/js/main.jsx`
