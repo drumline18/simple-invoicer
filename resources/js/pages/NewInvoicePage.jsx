@@ -207,8 +207,8 @@ export default function NewInvoicePage() {
         onInvoiceChange={setInvoice}
         onSave={handleSave}
         onExport={handleExport}
-        mode="new"
-        modeLabel={savedId ? `New invoice draft #${invoice.invoice_number}` : "Creating a new invoice"}
+        mode={savedId ? "edit" : "new"}
+        modeLabel={savedId ? `Editing invoice #${invoice.invoice_number}` : "Creating a new invoice"}
         saveLabel={savedId ? "Update Invoice" : "Save Invoice"}
         notice={notice}
         noticeTone={noticeTone}

@@ -60,6 +60,7 @@ export default function InvoiceEditor({
   saveClientForQuickFill,
   onSaveClientForQuickFillChange,
 }) {
+  const isEditMode = String(mode || "").toLowerCase() === "edit";
   const totals = recalcInvoice(invoice.items);
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
@@ -198,9 +199,9 @@ export default function InvoiceEditor({
   return (
     <div className="editor-layout">
       <section className="panel editor-panel">
-        <div className={`editor-mode ${mode === "edit" ? "edit" : "new"}`}>
-          <strong>{mode === "edit" ? "EDIT" : "NEW"}</strong>
-          <span>{modeLabel || (mode === "edit" ? "Editing Invoice" : "New Invoice")}</span>
+        <div className={`editor-mode ${isEditMode ? "edit" : "new"}`}>
+          <strong>{isEditMode ? "EDIT" : "NEW"}</strong>
+          <span>{modeLabel || (isEditMode ? "Editing Invoice" : "New Invoice")}</span>
         </div>
         <div className="panel-toolbar">
           <button type="submit" className="primary" form="invoice-editor-form">
