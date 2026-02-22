@@ -160,6 +160,7 @@ export default function NewInvoicePage() {
         return;
       }
       showSuccess("Invoice saved.");
+      navigate(`/invoices/${saved.id}/edit`, { replace: true });
     } catch (error) {
       showError(error.message);
     }
@@ -176,6 +177,7 @@ export default function NewInvoicePage() {
         currentId = saved.id;
         setSavedId(saved.id);
         showSuccess("Invoice saved and opened for PDF export.");
+        navigate(`/invoices/${saved.id}/edit`, { replace: true });
       }
       window.open(`/print/invoice/${currentId}?autoprint=1`, "_blank", "noopener");
     } catch (error) {
@@ -236,8 +238,12 @@ export default function NewInvoicePage() {
             return;
           }
           try {
-            await saveInvoiceWithOptionalClient(pending, true);
+            const saved = await saveInvoiceWithOptionalClient(pending, true);
+            if (!saved) {
+              return;
+            }
             showSuccess("Client overwritten and invoice saved.");
+            navigate(`/invoices/${saved.id}/edit`, { replace: true });
           } catch (error) {
             showError(error.message);
           }
