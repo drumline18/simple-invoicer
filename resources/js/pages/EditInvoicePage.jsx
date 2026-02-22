@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
 import InvoiceEditor from "../components/InvoiceEditor";
 import InvoicePdfPreview from "../components/InvoicePdfPreview";
+import ToastNotice from "../components/ToastNotice";
 import { getInvoice, getSettings, listClients, saveClient, updateInvoice } from "../lib/api";
 import { normalizeInvoiceFromApi } from "../lib/invoiceMath";
 
@@ -14,21 +15,53 @@ export default function EditInvoicePage() {
   const [saveClientForQuickFill, setSaveClientForQuickFill] = useState(false);
   const [notice, setNotice] = useState("Loading invoice...");
   const [noticeTone, setNoticeTone] = useState("info");
+  const [toast, setToast] = useState({ open: false, message: "", tone: "info" });
   const [overwriteModal, setOverwriteModal] = useState({ open: false, payload: null });
+  const toastTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current);
+      }
+    };
+  }, []);
+
+  function showToast(message, tone) {
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current);
+    }
+    setToast({ open: true, message, tone });
+    toastTimerRef.current = setTimeout(() => {
+      setToast((prev) => ({ ...prev, open: false }));
+      toastTimerRef.current = null;
+    }, 3500);
+  }
+
+  function closeToast() {
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current);
+      toastTimerRef.current = null;
+    }
+    setToast((prev) => ({ ...prev, open: false }));
+  }
 
   function showInfo(message) {
     setNotice(message);
     setNoticeTone("info");
+    showToast(message, "info");
   }
 
   function showSuccess(message) {
     setNotice(message);
     setNoticeTone("success");
+    showToast(message, "success");
   }
 
   function showError(message) {
     setNotice(message);
     setNoticeTone("error");
+    showToast(message, "error");
   }
 
   useEffect(() => {
@@ -119,6 +152,8 @@ export default function EditInvoicePage() {
         onInvoiceChange={setInvoice}
         onSave={handleSave}
         onExport={handleExport}
+        mode="edit"
+        modeLabel={`Editing invoice #${invoice.invoice_number || id}`}
         saveLabel="Update Invoice"
         notice={notice}
         noticeTone={noticeTone}
@@ -126,6 +161,12 @@ export default function EditInvoicePage() {
         clients={clients}
         saveClientForQuickFill={saveClientForQuickFill}
         onSaveClientForQuickFillChange={setSaveClientForQuickFill}
+      />
+      <ToastNotice
+        open={toast.open}
+        tone={toast.tone}
+        message={toast.message}
+        onClose={closeToast}
       />
       <ConfirmModal
         open={overwriteModal.open}

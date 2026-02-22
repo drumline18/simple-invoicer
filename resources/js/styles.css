@@ -83,6 +83,50 @@ nav a.active {
   align-items: center;
 }
 
+.editor-mode {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.45rem 0.65rem;
+  margin-bottom: 0.65rem;
+  font-size: 0.9rem;
+}
+
+.editor-mode strong {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.editor-mode.new {
+  background: #eef8f3;
+  border-color: #bfe2cf;
+  color: #18503a;
+}
+
+.editor-mode.new strong {
+  background: #2f6d5d;
+  color: #fff;
+}
+
+.editor-mode.edit {
+  background: #fff4e7;
+  border-color: #e9c8a5;
+  color: #7a4a18;
+}
+
+.editor-mode.edit strong {
+  background: #9a5c1f;
+  color: #fff;
+}
+
 .page-tools {
   justify-content: flex-end;
 }
@@ -245,6 +289,69 @@ th {
   background: #fdecea;
   color: #8a1f1a;
   border-color: #f3c5c1;
+}
+
+.toast-stack {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1200;
+  width: min(92vw, 380px);
+}
+
+.toast {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+  background: #fff;
+  padding: 0.65rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  animation: toast-enter 180ms ease-out;
+}
+
+.toast p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.toast button {
+  width: auto;
+  min-width: auto;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.82rem;
+}
+
+.toast.info {
+  background: #eef3ff;
+  color: #214a8d;
+  border-color: #c8d9ff;
+}
+
+.toast.success {
+  background: #e8f7ee;
+  color: #1f6a3f;
+  border-color: #b7e6c9;
+}
+
+.toast.error {
+  background: #fdecea;
+  color: #8a1f1a;
+  border-color: #f3c5c1;
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .preview-panel h2 {
@@ -579,6 +686,13 @@ th {
 
   .preview-page-frame {
     width: 100%;
+  }
+
+  .toast-stack {
+    top: 0.75rem;
+    right: 0.75rem;
+    left: 0.75rem;
+    width: auto;
   }
 
 }

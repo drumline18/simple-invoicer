@@ -50,6 +50,8 @@ export default function InvoiceEditor({
   onInvoiceChange,
   onSave,
   onExport,
+  mode,
+  modeLabel,
   saveLabel,
   notice,
   noticeTone,
@@ -196,6 +198,10 @@ export default function InvoiceEditor({
   return (
     <div className="editor-layout">
       <section className="panel editor-panel">
+        <div className={`editor-mode ${mode === "edit" ? "edit" : "new"}`}>
+          <strong>{mode === "edit" ? "EDIT" : "NEW"}</strong>
+          <span>{modeLabel || (mode === "edit" ? "Editing Invoice" : "New Invoice")}</span>
+        </div>
         <div className="panel-toolbar">
           <button type="submit" className="primary" form="invoice-editor-form">
             {saveLabel || "Save Invoice"}

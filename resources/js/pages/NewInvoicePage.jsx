@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
 import InvoiceEditor from "../components/InvoiceEditor";
 import InvoicePdfPreview from "../components/InvoicePdfPreview";
+import ToastNotice from "../components/ToastNotice";
 import {
   createInvoice,
   getNextInvoiceNumber,
@@ -22,21 +23,53 @@ export default function NewInvoicePage() {
   const [saveClientForQuickFill, setSaveClientForQuickFill] = useState(false);
   const [notice, setNotice] = useState("Ready.");
   const [noticeTone, setNoticeTone] = useState("info");
+  const [toast, setToast] = useState({ open: false, message: "", tone: "info" });
   const [overwriteModal, setOverwriteModal] = useState({ open: false, payload: null });
+  const toastTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current);
+      }
+    };
+  }, []);
+
+  function showToast(message, tone) {
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current);
+    }
+    setToast({ open: true, message, tone });
+    toastTimerRef.current = setTimeout(() => {
+      setToast((prev) => ({ ...prev, open: false }));
+      toastTimerRef.current = null;
+    }, 3500);
+  }
+
+  function closeToast() {
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current);
+      toastTimerRef.current = null;
+    }
+    setToast((prev) => ({ ...prev, open: false }));
+  }
 
   function showInfo(message) {
     setNotice(message);
     setNoticeTone("info");
+    showToast(message, "info");
   }
 
   function showSuccess(message) {
     setNotice(message);
     setNoticeTone("success");
+    showToast(message, "success");
   }
 
   function showError(message) {
     setNotice(message);
     setNoticeTone("error");
+    showToast(message, "error");
   }
 
   useEffect(() => {
@@ -174,6 +207,8 @@ export default function NewInvoicePage() {
         onInvoiceChange={setInvoice}
         onSave={handleSave}
         onExport={handleExport}
+        mode="new"
+        modeLabel={savedId ? `New invoice draft #${invoice.invoice_number}` : "Creating a new invoice"}
         saveLabel={savedId ? "Update Invoice" : "Save Invoice"}
         notice={notice}
         noticeTone={noticeTone}
@@ -181,6 +216,12 @@ export default function NewInvoicePage() {
         clients={clients}
         saveClientForQuickFill={saveClientForQuickFill}
         onSaveClientForQuickFillChange={setSaveClientForQuickFill}
+      />
+      <ToastNotice
+        open={toast.open}
+        tone={toast.tone}
+        message={toast.message}
+        onClose={closeToast}
       />
       <ConfirmModal
         open={overwriteModal.open}
