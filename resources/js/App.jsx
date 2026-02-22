@@ -32,8 +32,11 @@ export default function App() {
             <ReceiptText size={16} className="brand-logo-icon" />
             <span className="brand-logo-mark">SI</span>
           </div>
-          <div>
-            <h1>Simple Invoicer</h1>
+          <div className="brand-copy">
+            <div className="brand-title-row">
+              <h1>Simple Invoicer</h1>
+              <span className="brand-chip">Desk Edition</span>
+            </div>
             <p>Local-only invoices in CAD with GST/QST.</p>
           </div>
         </div>
