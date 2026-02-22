@@ -64,30 +64,6 @@ h3 {
   gap: 0.75rem;
 }
 
-.brand-copy {
-  min-width: 0;
-}
-
-.brand-title-row {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.brand-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.12rem 0.45rem;
-  border-radius: 999px;
-  border: 1px solid #cbb99f;
-  background: linear-gradient(180deg, #fffaf0, #f5ead8);
-  color: #72512b;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
 .brand-logo {
   width: 2.4rem;
   height: 2.4rem;
@@ -928,10 +904,6 @@ th {
   .app-header {
     flex-direction: column;
     align-items: start;
-  }
-
-  .brand-title-row {
-    flex-wrap: wrap;
   }
 
   .form-grid.two {
