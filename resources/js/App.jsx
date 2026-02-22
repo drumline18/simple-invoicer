@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { CirclePlus } from "lucide-react";
+import { CirclePlus, FileText, Settings, Users } from "lucide-react";
 import { NavLink, Route, Routes, useLocation } from "react-router-dom";
 import ClientsPage from "./pages/ClientsPage";
 import EditInvoicePage from "./pages/EditInvoicePage";
@@ -35,9 +35,18 @@ export default function App() {
             <CirclePlus size={16} aria-hidden="true" />
             <span>New Invoice</span>
           </NavLink>
-          <NavLink to="/invoices">Invoices</NavLink>
-          <NavLink to="/clients">Clients</NavLink>
-          <NavLink to="/settings">Settings</NavLink>
+          <NavLink to="/invoices" className="with-icon">
+            <FileText size={16} aria-hidden="true" />
+            <span>Invoices</span>
+          </NavLink>
+          <NavLink to="/clients" className="with-icon">
+            <Users size={16} aria-hidden="true" />
+            <span>Clients</span>
+          </NavLink>
+          <NavLink to="/settings" className="with-icon">
+            <Settings size={16} aria-hidden="true" />
+            <span>Settings</span>
+          </NavLink>
         </nav>
       </header>
 
