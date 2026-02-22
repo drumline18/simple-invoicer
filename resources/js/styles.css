@@ -233,6 +233,25 @@ label {
   gap: 0.7rem;
 }
 
+.client-info-grid {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.client-info-left,
+.client-info-right {
+  min-width: 0;
+}
+
+.client-info-left label:last-child,
+.client-info-right label:last-child {
+  margin-bottom: 0;
+}
+
+.client-info-right textarea {
+  min-height: 9.6rem;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -713,4 +732,11 @@ th {
     width: auto;
   }
 
+}
+
+@media (min-width: 821px) {
+  .client-info-grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
 }

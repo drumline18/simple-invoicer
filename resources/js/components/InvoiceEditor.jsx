@@ -263,63 +263,65 @@ export default function InvoiceEditor({
 
           <fieldset className="form-section">
             <legend>Client Info</legend>
-            <div className="form-grid two">
-              <label>
-                Client name
-                <div className="client-name-autocomplete" ref={suggestionWrapRef}>
+            <div className="client-info-grid">
+              <div className="client-info-left">
+                <label>
+                  Client name
+                  <div className="client-name-autocomplete" ref={suggestionWrapRef}>
+                    <input
+                      type="text"
+                      value={invoice.client_name}
+                      onFocus={() => setIsSuggestionOpen(true)}
+                      onChange={(event) => onClientNameChange(event.target.value)}
+                      onKeyDown={onClientNameKeyDown}
+                      autoComplete="off"
+                    />
+                    {isSuggestionOpen && filteredClients.length ? (
+                      <ul className="client-suggestions" role="listbox">
+                        {filteredClients.map((client, index) => (
+                          <li key={client.id}>
+                            <button
+                              type="button"
+                              className={index === activeSuggestionIndex ? "active" : ""}
+                              onMouseDown={(event) => event.preventDefault()}
+                              onClick={() => applyClientSuggestion(client)}
+                            >
+                              <span>{client.name}</span>
+                              <small>{client.email || client.phone || "Saved client"}</small>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </div>
+                </label>
+                <label>
+                  Client email
+                  <input
+                    type="email"
+                    value={invoice.client_email}
+                    onChange={(event) => updateField("client_email", event.target.value)}
+                  />
+                </label>
+                <label>
+                  Client phone
                   <input
                     type="text"
-                    value={invoice.client_name}
-                    onFocus={() => setIsSuggestionOpen(true)}
-                    onChange={(event) => onClientNameChange(event.target.value)}
-                    onKeyDown={onClientNameKeyDown}
-                    autoComplete="off"
+                    value={invoice.client_phone}
+                    onChange={(event) => updateField("client_phone", event.target.value)}
                   />
-                  {isSuggestionOpen && filteredClients.length ? (
-                    <ul className="client-suggestions" role="listbox">
-                      {filteredClients.map((client, index) => (
-                        <li key={client.id}>
-                          <button
-                            type="button"
-                            className={index === activeSuggestionIndex ? "active" : ""}
-                            onMouseDown={(event) => event.preventDefault()}
-                            onClick={() => applyClientSuggestion(client)}
-                          >
-                            <span>{client.name}</span>
-                            <small>{client.email || client.phone || "Saved client"}</small>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </div>
-              </label>
-              <label>
-                Client email
-                <input
-                  type="email"
-                  value={invoice.client_email}
-                  onChange={(event) => updateField("client_email", event.target.value)}
-                />
-              </label>
-            </div>
-            <div className="form-grid two">
-              <label>
-                Client phone
-                <input
-                  type="text"
-                  value={invoice.client_phone}
-                  onChange={(event) => updateField("client_phone", event.target.value)}
-                />
-              </label>
-              <label>
-                Client address
-                <textarea
-                  rows="2"
-                  value={invoice.client_address}
-                  onChange={(event) => updateField("client_address", event.target.value)}
-                />
-              </label>
+                </label>
+              </div>
+              <div className="client-info-right">
+                <label>
+                  Client address
+                  <textarea
+                    rows="6"
+                    value={invoice.client_address}
+                    onChange={(event) => updateField("client_address", event.target.value)}
+                  />
+                </label>
+              </div>
             </div>
             <label className="checkbox-row">
               <input
