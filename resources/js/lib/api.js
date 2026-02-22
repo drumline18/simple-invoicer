@@ -56,6 +56,13 @@ export async function updateInvoice(id, payload) {
   return readJson(response);
 }
 
+export async function deleteInvoice(id) {
+  const response = await fetch(`/api/invoices/${id}`, {
+    method: "DELETE",
+  });
+  return readJson(response);
+}
+
 export async function getNextInvoiceNumber(issueDate) {
   const response = await fetch(
     `/api/invoices/next-number?issueDate=${encodeURIComponent(issueDate)}`

@@ -171,6 +171,18 @@ class InvoicesController extends Controller
         return response()->json($this->formatInvoice($invoice));
     }
 
+    public function destroy(int $id): JsonResponse
+    {
+        $invoice = Invoice::query()->find($id);
+        if (! $invoice) {
+            return response()->json(['error' => 'Invoice not found.'], 404);
+        }
+
+        $invoice->delete();
+
+        return response()->json(['ok' => true]);
+    }
+
     private function validateInvoicePayload(Request $request): array
     {
         $data = $request->validate([

@@ -20,3 +20,4 @@ Route::get('/invoices', [InvoicesController::class, 'index']);
 Route::get('/invoices/{id}', [InvoicesController::class, 'show']);
 Route::post('/invoices', [InvoicesController::class, 'store']);
 Route::put('/invoices/{id}', [InvoicesController::class, 'update']);
+Route::delete('/invoices/{id}', [InvoicesController::class, 'destroy']);

@@ -114,4 +114,25 @@ class InvoiceApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('invoiceNumber', '2026022202');
     }
+
+    public function test_invoice_can_be_deleted_with_hard_delete(): void
+    {
+        $created = $this->postJson('/api/invoices', [
+            'invoice_number' => 'DEL-1',
+            'language' => 'en',
+            'issue_date' => '2026-02-22',
+            'items' => [
+                ['description' => 'Service', 'qty' => 1, 'unitPrice' => 50, 'taxable' => true],
+            ],
+        ])->assertCreated();
+
+        $invoiceId = $created->json('id');
+
+        $this->deleteJson('/api/invoices/'.$invoiceId)
+            ->assertOk()
+            ->assertJson(['ok' => true]);
+
+        $this->assertDatabaseMissing('invoices', ['id' => $invoiceId]);
+        $this->assertDatabaseMissing('invoice_items', ['invoice_id' => $invoiceId]);
+    }
 }
