@@ -58,6 +58,55 @@ h3 {
   color: var(--muted);
 }
 
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-logo {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.65rem;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(160deg, #3f8573, #2a5b4d);
+  border: 1px solid #2a5d50;
+  box-shadow: 0 8px 18px rgba(38, 79, 67, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.brand-logo-glow {
+  position: absolute;
+  top: -35%;
+  right: -25%;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0));
+}
+
+.brand-logo-icon {
+  position: absolute;
+  left: 0.34rem;
+  top: 0.36rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.brand-logo-mark {
+  position: absolute;
+  right: 0.31rem;
+  bottom: 0.24rem;
+  font-family: "Bitter", Georgia, serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.95);
+}
+
 nav {
   display: flex;
   gap: 0.5rem;

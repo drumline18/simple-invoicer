@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { CirclePlus, FileText, Settings, Users } from "lucide-react";
+import { CirclePlus, FileText, ReceiptText, Settings, Users } from "lucide-react";
 import { NavLink, Route, Routes, useLocation } from "react-router-dom";
 import ClientsPage from "./pages/ClientsPage";
 import EditInvoicePage from "./pages/EditInvoicePage";
@@ -26,9 +26,16 @@ export default function App() {
   return (
     <div>
       <header className="app-header">
-        <div>
-          <h1>Simple Invoicer</h1>
-          <p>Local-only invoices in CAD with GST/QST.</p>
+        <div className="brand-block">
+          <div className="brand-logo" aria-hidden="true">
+            <span className="brand-logo-glow" />
+            <ReceiptText size={16} className="brand-logo-icon" />
+            <span className="brand-logo-mark">SI</span>
+          </div>
+          <div>
+            <h1>Simple Invoicer</h1>
+            <p>Local-only invoices in CAD with GST/QST.</p>
+          </div>
         </div>
         <nav>
           <NavLink to="/" end className="with-icon">
