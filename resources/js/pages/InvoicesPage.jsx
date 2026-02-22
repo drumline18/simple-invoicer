@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { CirclePlus, Pencil, Printer } from "lucide-react";
 import { Link } from "react-router-dom";
 import { listInvoices } from "../lib/api";
 import { fmtCad } from "../lib/invoiceMath";
@@ -31,7 +32,10 @@ export default function InvoicesPage() {
           placeholder="Search by number or client"
           onChange={(event) => setSearch(event.target.value)}
         />
-        <Link className="button-link" to="/invoices/new">New Invoice</Link>
+        <Link className="button-link with-icon" to="/invoices/new">
+          <CirclePlus size={16} aria-hidden="true" />
+          New Invoice
+        </Link>
       </div>
 
       {notice ? <p className="notice">{notice}</p> : null}
@@ -46,11 +50,16 @@ export default function InvoicesPage() {
             <div className="muted">{invoice.issue_date}</div>
             <div><strong>{fmtCad(Number(invoice.total))}</strong></div>
             <div className="row-actions">
-              <Link className="button-link" to={`/invoices/${invoice.id}/edit`}>Edit</Link>
+              <Link className="button-link with-icon" to={`/invoices/${invoice.id}/edit`}>
+                <Pencil size={16} aria-hidden="true" />
+                Edit
+              </Link>
               <button
                 type="button"
+                className="with-icon"
                 onClick={() => window.open(`/print/invoice/${invoice.id}?autoprint=1`, "_blank", "noopener")}
               >
+                <Printer size={16} aria-hidden="true" />
                 Export PDF
               </button>
             </div>

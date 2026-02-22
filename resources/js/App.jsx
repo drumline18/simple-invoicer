@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { CirclePlus } from "lucide-react";
 import { NavLink, Route, Routes, useLocation } from "react-router-dom";
 import ClientsPage from "./pages/ClientsPage";
 import EditInvoicePage from "./pages/EditInvoicePage";
@@ -30,10 +31,8 @@ export default function App() {
           <p>Local-only invoices in CAD with GST/QST.</p>
         </div>
         <nav>
-          <NavLink to="/" end className="nav-link-with-icon">
-            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-              <path d="M8 3a.75.75 0 0 1 .75.75v3.5h3.5a.75.75 0 0 1 0 1.5h-3.5v3.5a.75.75 0 0 1-1.5 0v-3.5h-3.5a.75.75 0 0 1 0-1.5h3.5v-3.5A.75.75 0 0 1 8 3Z" />
-            </svg>
+          <NavLink to="/" end className="with-icon">
+            <CirclePlus size={16} aria-hidden="true" />
             <span>New Invoice</span>
           </NavLink>
           <NavLink to="/invoices">Invoices</NavLink>

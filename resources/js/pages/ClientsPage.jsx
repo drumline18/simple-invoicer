@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Archive, Pencil, Save, Undo2, UserPlus, X } from "lucide-react";
 import ConfirmModal from "../components/ConfirmModal";
 import { archiveClient, listClients, restoreClient, saveClient, updateClient } from "../lib/api";
 
@@ -180,11 +181,15 @@ export default function ClientsPage() {
           </label>
         </div>
         <div className="row-actions">
-          <button type="submit" className="primary">
+          <button type="submit" className="primary with-icon">
+            {editingId ? <Save size={16} aria-hidden="true" /> : <UserPlus size={16} aria-hidden="true" />}
             {editingId ? "Update Client" : "Add Client"}
           </button>
           {editingId ? (
-            <button type="button" onClick={startNew}>Cancel Edit</button>
+            <button type="button" onClick={startNew} className="with-icon">
+              <X size={16} aria-hidden="true" />
+              Cancel Edit
+            </button>
           ) : null}
         </div>
       </form>
@@ -198,11 +203,16 @@ export default function ClientsPage() {
               <div className="muted">{client.email || client.phone || "No contact info"}</div>
             </div>
             <div className="row-actions">
-              <button type="button" onClick={() => startEdit(client)}>Edit</button>
+              <button type="button" onClick={() => startEdit(client)} className="with-icon">
+                <Pencil size={16} aria-hidden="true" />
+                Edit
+              </button>
               <button
                 type="button"
+                className="with-icon"
                 onClick={() => setArchiveModal({ open: true, client })}
               >
+                <Archive size={16} aria-hidden="true" />
                 Archive
               </button>
             </div>
@@ -221,7 +231,10 @@ export default function ClientsPage() {
                   <div className="muted">Archived</div>
                 </div>
                 <div className="row-actions">
-                  <button type="button" onClick={() => handleRestore(client.id)}>Restore</button>
+                  <button type="button" onClick={() => handleRestore(client.id)} className="with-icon">
+                    <Undo2 size={16} aria-hidden="true" />
+                    Restore
+                  </button>
                 </div>
               </li>
             ))}

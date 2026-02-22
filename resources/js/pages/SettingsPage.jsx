@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Save } from "lucide-react";
 import { getSettings, saveSettings } from "../lib/api";
 
 const INITIAL_SETTINGS = {
@@ -105,7 +106,10 @@ export default function SettingsPage() {
             onChange={(event) => updateField("default_terms", event.target.value)}
           />
         </label>
-        <button type="submit" className="primary">Save Settings</button>
+        <button type="submit" className="primary with-icon">
+          <Save size={16} aria-hidden="true" />
+          Save Settings
+        </button>
       </form>
       <p className="notice">{notice}</p>
     </section>

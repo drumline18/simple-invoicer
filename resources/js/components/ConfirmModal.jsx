@@ -1,3 +1,5 @@
+import { Check, X } from "lucide-react";
+
 export default function ConfirmModal({
   open,
   title,
@@ -17,8 +19,12 @@ export default function ConfirmModal({
         <h3 id="modal-title">{title}</h3>
         <p>{message}</p>
         <div className="modal-actions">
-          <button type="button" onClick={onCancel}>{cancelLabel || "Cancel"}</button>
-          <button type="button" className="primary" onClick={onConfirm}>
+          <button type="button" onClick={onCancel} className="with-icon">
+            <X size={16} aria-hidden="true" />
+            {cancelLabel || "Cancel"}
+          </button>
+          <button type="button" className="primary with-icon" onClick={onConfirm}>
+            <Check size={16} aria-hidden="true" />
             {confirmLabel || "Confirm"}
           </button>
         </div>

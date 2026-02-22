@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Plus, Printer, Save, Trash2 } from "lucide-react";
 import { fmtCad, recalcInvoice, toNumber } from "../lib/invoiceMath";
 
 function ItemRow({ item, index, onItemChange, onRemoveItem }) {
@@ -37,7 +38,8 @@ function ItemRow({ item, index, onItemChange, onRemoveItem }) {
         />
       </td>
       <td>
-        <button type="button" className="danger" onClick={() => onRemoveItem(index)}>
+        <button type="button" className="danger with-icon" onClick={() => onRemoveItem(index)}>
+          <Trash2 size={16} aria-hidden="true" />
           Remove
         </button>
       </td>
@@ -204,10 +206,14 @@ export default function InvoiceEditor({
           <span>{modeLabel || (isEditMode ? "Editing Invoice" : "New Invoice")}</span>
         </div>
         <div className="panel-toolbar">
-          <button type="submit" className="primary" form="invoice-editor-form">
+          <button type="submit" className="primary with-icon" form="invoice-editor-form">
+            <Save size={16} aria-hidden="true" />
             {saveLabel || "Save Invoice"}
           </button>
-          <button type="button" onClick={onExport}>Export PDF</button>
+          <button type="button" onClick={onExport} className="with-icon">
+            <Printer size={16} aria-hidden="true" />
+            Export PDF
+          </button>
         </div>
 
         <form id="invoice-editor-form" onSubmit={submit}>
@@ -348,7 +354,10 @@ export default function InvoiceEditor({
               ))}
             </tbody>
           </table>
-          <button type="button" onClick={addItem}>Add item</button>
+          <button type="button" onClick={addItem} className="with-icon">
+            <Plus size={16} aria-hidden="true" />
+            Add item
+          </button>
 
           <div className="totals-box">
             <div><span>Subtotal</span><strong>{fmtCad(totals.subtotal)}</strong></div>
