@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CirclePlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
 import InvoiceEditor from "../components/InvoiceEditor";
@@ -202,17 +201,12 @@ export default function NewInvoicePage() {
 
   return (
     <div>
-      <div className="page-tools">
-        <button type="button" onClick={startFresh} className="with-icon">
-          <CirclePlus size={16} aria-hidden="true" />
-          New Blank Invoice
-        </button>
-      </div>
       <InvoiceEditor
         invoice={invoice}
         onInvoiceChange={setInvoice}
         onSave={handleSave}
         onExport={handleExport}
+        onClear={startFresh}
         mode={savedId ? "edit" : "new"}
         modeLabel={savedId ? `Editing invoice #${invoice.invoice_number}` : "Creating a new invoice"}
         saveLabel={savedId ? "Update Invoice" : "Save Invoice"}

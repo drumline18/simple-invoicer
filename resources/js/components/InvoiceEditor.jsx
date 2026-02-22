@@ -57,6 +57,7 @@ export default function InvoiceEditor({
   saveLabel,
   notice,
   noticeTone,
+  onClear,
   preview,
   clients,
   saveClientForQuickFill,
@@ -229,6 +230,9 @@ export default function InvoiceEditor({
             Export PDF
           </button>
         </div>
+        {notice ? (
+          <p className={`notice-pill notice-sticky ${noticeTone || "info"}`}>{notice}</p>
+        ) : null}
 
         <form id="invoice-editor-form" onSubmit={submit}>
           <fieldset className="form-section">
@@ -426,10 +430,15 @@ export default function InvoiceEditor({
               </button>
             </label>
           ) : null}
+
+          {!isEditMode && typeof onClear === "function" ? (
+            <div className="form-clear-row">
+              <button type="button" className="danger clear-button" onClick={onClear}>
+                CLEAR
+              </button>
+            </div>
+          ) : null}
         </form>
-        {notice ? (
-          <p className={`notice-pill ${noticeTone || "info"}`}>{notice}</p>
-        ) : null}
       </section>
 
       <section className="panel preview-panel">

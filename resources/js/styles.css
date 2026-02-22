@@ -357,6 +357,25 @@ th {
   color: var(--muted);
 }
 
+.form-clear-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
+.clear-button {
+  width: auto;
+  background: linear-gradient(180deg, #f3d9d5, #ebc3be);
+  border-color: #d6a6a0;
+  color: #7f231b;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.clear-button:hover {
+  background: linear-gradient(180deg, #f0cec9, #e6b6b0);
+}
+
 .notice {
   min-height: 1.2rem;
   color: var(--muted);
@@ -371,6 +390,14 @@ th {
   font-weight: 600;
   border: 1px solid transparent;
   margin: 0.75rem 0 0;
+}
+
+.notice-sticky {
+  position: sticky;
+  top: 0.6rem;
+  z-index: 20;
+  margin: 0 0 0.75rem;
+  box-shadow: 0 6px 14px rgba(35, 25, 11, 0.12);
 }
 
 .notice-pill.info {
