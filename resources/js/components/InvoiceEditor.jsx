@@ -31,11 +31,15 @@ function ItemRow({ item, index, onItemChange, onRemoveItem }) {
         />
       </td>
       <td className="center-cell">
-        <input
-          type="checkbox"
-          checked={item.taxable !== false}
-          onChange={(event) => onItemChange(index, "taxable", event.target.checked)}
-        />
+        <label className="taxable-switch">
+          <input
+            type="checkbox"
+            checked={item.taxable !== false}
+            onChange={(event) => onItemChange(index, "taxable", event.target.checked)}
+            aria-label={`Taxable line item ${index + 1}`}
+          />
+          <span className="taxable-slider" aria-hidden="true" />
+        </label>
       </td>
       <td>
         <button type="button" className="danger with-icon" onClick={() => onRemoveItem(index)}>

@@ -324,10 +324,58 @@ th {
   vertical-align: middle;
 }
 
-.center-cell input[type="checkbox"] {
-  width: auto;
-  display: block;
+.taxable-switch {
+  position: relative;
+  display: inline-flex;
+  width: 2.25rem;
+  height: 1.35rem;
   margin: 0 auto;
+}
+
+.taxable-switch input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.taxable-slider {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #efe7d9, #e4d8c4);
+  border: 1px solid #cebda6;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.taxable-slider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0.18rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #d2c4b0;
+  box-shadow: 0 2px 6px rgba(44, 30, 13, 0.2);
+  transform: translateY(-50%);
+  transition: transform 0.18s ease;
+}
+
+.taxable-switch input:checked + .taxable-slider {
+  background: linear-gradient(180deg, #6ea997, #4f8d7c);
+  border-color: #3f7567;
+}
+
+.taxable-switch input:checked + .taxable-slider::after {
+  transform: translate(0.9rem, -50%);
+}
+
+.taxable-switch input:focus-visible + .taxable-slider {
+  box-shadow: 0 0 0 3px rgba(79, 141, 124, 0.26);
 }
 
 .totals-box {
