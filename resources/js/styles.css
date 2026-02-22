@@ -321,6 +321,13 @@ th {
 
 .center-cell {
   text-align: center;
+  vertical-align: middle;
+}
+
+.center-cell input[type="checkbox"] {
+  width: auto;
+  display: block;
+  margin: 0 auto;
 }
 
 .totals-box {
