@@ -121,9 +121,15 @@ nav a:hover {
 .panel-toolbar,
 .page-tools {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
   align-items: center;
+}
+
+.panel-toolbar button,
+.panel-toolbar .button-link {
+  width: auto;
 }
 
 .editor-mode {
@@ -392,12 +398,12 @@ th {
   margin: 0.75rem 0 0;
 }
 
-.notice-sticky {
-  position: sticky;
-  top: 0.6rem;
-  z-index: 20;
-  margin: 0 0 0.75rem;
-  box-shadow: 0 6px 14px rgba(35, 25, 11, 0.12);
+.notice-inline {
+  margin: 0 0 0 auto;
+  max-width: min(48%, 380px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .notice-pill.info {
@@ -822,6 +828,11 @@ th {
     right: 0.75rem;
     left: 0.75rem;
     width: auto;
+  }
+
+  .notice-inline {
+    margin-left: 0;
+    max-width: 100%;
   }
 
 }

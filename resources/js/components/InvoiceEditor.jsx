@@ -229,10 +229,10 @@ export default function InvoiceEditor({
             <Printer size={16} aria-hidden="true" />
             Export PDF
           </button>
+          {notice ? (
+            <p className={`notice-pill notice-inline ${noticeTone || "info"}`}>{notice}</p>
+          ) : null}
         </div>
-        {notice ? (
-          <p className={`notice-pill notice-sticky ${noticeTone || "info"}`}>{notice}</p>
-        ) : null}
 
         <form id="invoice-editor-form" onSubmit={submit}>
           <fieldset className="form-section">
