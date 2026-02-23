@@ -12,13 +12,15 @@ This repo is a Laravel + React rewrite of a local invoicing app.
 ## Critical Business Rules
 
 - CAD only
-- GST: 5%
-- QST: 9.975%
+- Taxes are configurable via settings (`tax_1_*`, `tax_2_*`)
+- Province presets are available (AB, BC, MB, NB, NL, NS, ON, PE, QC, SK) with manual override
+- If tax label is blank or tax rate is 0, that tax line is treated as disabled/hidden
 - Invoice numbering: `YYYYMMDDXX` and may exceed 2 digits after 99
 - Daily sequence must stay in sync even when invoice number is explicitly provided
 - Client name uniqueness is case-insensitive in active clients
 - Archived client name conflicts return `CLIENT_ARCHIVED`
 - Empty notes/terms are hidden in print view
+- Business timezone is configurable and should drive default issue date behavior
 
 ## Dev Commands
 

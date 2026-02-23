@@ -1,6 +1,6 @@
 # Simple Invoicer
 
-Local-only invoicing app (Laravel API + React SPA) for CAD invoices with GST/QST.
+Simple Invoicer is a self-hosted solution designed for fast, no-fuss invoicing—no account required, no unnecessary features, and no hidden costs. Create and export invoices with minimal friction, including the ability to generate a PDF from a blank invoice if you wish. While it may not replace dedicated accounting software, it makes sending invoices quick and straightforward. Built as a Laravel API with a React SPA, it features flexible Canadian sales tax options and puts you in control of your data.
 
 ## Stack
 
@@ -11,13 +11,14 @@ Local-only invoicing app (Laravel API + React SPA) for CAD invoices with GST/QST
 ## Core Behavior
 
 - Currency is CAD only
-- Taxes: GST 5%, QST 9.975%
+- Taxes are configurable (two tax lines with province presets + manual override)
 - Invoice number format: `YYYYMMDDXX` (supports `...100`, `...101`, etc.)
 - Client quick-fill from saved clients
 - Client records are archived/restored (not hard deleted)
 - Export is browser print route: `/print/invoice/{id}`
 - Export language is per-invoice (`en` / `fr`), app UI remains English
 - Empty notes/terms are hidden in export/print view
+- Business timezone is configurable and used for default invoice dates
 
 ## Setup
 
