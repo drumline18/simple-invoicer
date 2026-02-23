@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CirclePlus, FileText, Moon, Settings, Sun, Users } from "lucide-react";
-import { NavLink, Route, Routes, useLocation } from "react-router-dom";
+import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom";
 import ClientsPage from "./pages/ClientsPage";
 import EditInvoicePage from "./pages/EditInvoicePage";
 import InvoicesPage from "./pages/InvoicesPage";
@@ -55,14 +55,14 @@ export default function App() {
     <div>
       <header className="app-header">
         <div className="brand-block">
-          <a href="/" className="brand-link" aria-label="Simple Invoicer home">
+          <Link to="/" className="brand-link" aria-label="Simple Invoicer home">
             <span className="sr-only">Simple Invoicer</span>
             <img
               className="brand-image"
               src="/brand/SimpleInvoicer.svg"
               alt="Simple Invoicer"
             />
-          </a>
+          </Link>
         </div>
         <div className="header-right">
           <button
