@@ -57,12 +57,37 @@ php artisan test
 - Web root must point to `public/`
 - Run a production frontend build (`npm run build`)
 - Ensure `storage/` and `bootstrap/cache/` are writable
+- Optional app lock is available via environment variables (see below)
 - If React/Vite dev preamble errors appear, clear stale hot mode:
 
 ```bash
 del public\hot
 php artisan optimize:clear
 ```
+
+## Optional App Password Lock
+
+Simple Invoicer supports a single app-level password gate (no user accounts).
+
+1. In `.env`, enable lock and set a password:
+
+```bash
+APP_LOCK_ENABLED=true
+APP_LOCK_PASSWORD=your-strong-password
+```
+
+2. Clear cached config after changing environment values:
+
+```bash
+php artisan optimize:clear
+```
+
+3. Open the app and unlock at `/lock`.
+
+Notes:
+- The app uses one shared password and session-based unlock.
+- API and print routes are also protected while locked.
+- To disable the lock, set `APP_LOCK_ENABLED=false` and clear cache again.
 
 ## Key Paths
 

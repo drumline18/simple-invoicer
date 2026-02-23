@@ -21,6 +21,7 @@ This repo is a Laravel + React rewrite of a local invoicing app.
 - Archived client name conflicts return `CLIENT_ARCHIVED`
 - Empty notes/terms are hidden in print view
 - Business timezone is configurable and should drive default issue date behavior
+- Optional app-level password lock is supported (single shared password, no user accounts)
 
 ## Dev Commands
 
@@ -51,3 +52,5 @@ npm run build
 
 - Web root must point to `public/`
 - If Vite React preamble issues appear in production, remove `public/hot` and run `php artisan optimize:clear`
+- App lock env vars: `APP_LOCK_ENABLED` and `APP_LOCK_PASSWORD`
+- After updating lock env vars, run `php artisan optimize:clear`

@@ -1,11 +1,14 @@
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { CirclePlus, FileText, ReceiptText, Settings, Users } from "lucide-react";
+import { CirclePlus, FileText, Moon, ReceiptText, Settings, Sun, Users } from "lucide-react";
 import { NavLink, Route, Routes, useLocation } from "react-router-dom";
 import ClientsPage from "./pages/ClientsPage";
 import EditInvoicePage from "./pages/EditInvoicePage";
 import InvoicesPage from "./pages/InvoicesPage";
 import NewInvoicePage from "./pages/NewInvoicePage";
 import SettingsPage from "./pages/SettingsPage";
+
+const THEME_KEY = "simple-invoicer-theme";
 
 function RouteFrame({ children }) {
   return (
@@ -22,6 +25,31 @@ function RouteFrame({ children }) {
 
 export default function App() {
   const location = useLocation();
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved === "dark" || saved === "light") {
+        setTheme(saved);
+      }
+    } catch {
+      setTheme("light");
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch {
+      // ignore storage failures
+    }
+  }, [theme]);
+
+  function toggleTheme() {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  }
 
   return (
     <div>
@@ -37,24 +65,35 @@ export default function App() {
             <p>Self-hosted invoices with Canadian taxes.</p>
           </div>
         </div>
-        <nav>
-          <NavLink to="/" end className="with-icon">
-            <CirclePlus size={16} aria-hidden="true" />
-            <span>New Invoice</span>
-          </NavLink>
-          <NavLink to="/invoices" className="with-icon">
-            <FileText size={16} aria-hidden="true" />
-            <span>Invoices</span>
-          </NavLink>
-          <NavLink to="/clients" className="with-icon">
-            <Users size={16} aria-hidden="true" />
-            <span>Clients</span>
-          </NavLink>
-          <NavLink to="/settings" className="with-icon">
-            <Settings size={16} aria-hidden="true" />
-            <span>Settings</span>
-          </NavLink>
-        </nav>
+        <div className="header-right">
+          <button
+            type="button"
+            className="with-icon theme-toggle-compact"
+            onClick={toggleTheme}
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === "dark" ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />}
+          </button>
+          <nav>
+            <NavLink to="/" end className="with-icon">
+              <CirclePlus size={16} aria-hidden="true" />
+              <span>New Invoice</span>
+            </NavLink>
+            <NavLink to="/invoices" className="with-icon">
+              <FileText size={16} aria-hidden="true" />
+              <span>Invoices</span>
+            </NavLink>
+            <NavLink to="/clients" className="with-icon">
+              <Users size={16} aria-hidden="true" />
+              <span>Clients</span>
+            </NavLink>
+            <NavLink to="/settings" className="with-icon">
+              <Settings size={16} aria-hidden="true" />
+              <span>Settings</span>
+            </NavLink>
+          </nav>
+        </div>
       </header>
 
       <main className="app-main">
