@@ -54,6 +54,12 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'lock_enabled' => (bool) env('APP_LOCK_ENABLED', false),
+
+    'lock_password' => (string) env('APP_LOCK_PASSWORD', ''),
+
+    'lock_session_key' => 'app_unlocked',
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
