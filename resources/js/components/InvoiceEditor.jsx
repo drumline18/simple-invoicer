@@ -78,6 +78,7 @@ export default function InvoiceEditor({
   onInvoiceChange,
   onSave,
   onExport,
+  onDelete,
   mode,
   modeLabel,
   saveLabel,
@@ -259,6 +260,12 @@ export default function InvoiceEditor({
             <Printer size={16} aria-hidden="true" />
             Export PDF
           </button>
+          {isEditMode && typeof onDelete === "function" ? (
+            <button type="button" className="danger with-icon" onClick={onDelete}>
+              <Trash2 size={16} aria-hidden="true" />
+              Delete
+            </button>
+          ) : null}
           {notice ? (
             <p className={`notice-pill notice-inline ${noticeTone || "info"}`}>{notice}</p>
           ) : null}

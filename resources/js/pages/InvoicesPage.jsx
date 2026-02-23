@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { CirclePlus, Pencil, Printer } from "lucide-react";
+import { CirclePlus, Pencil, Printer, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { listInvoices } from "../lib/api";
+import ConfirmModal from "../components/ConfirmModal";
+import { deleteInvoice, listInvoices } from "../lib/api";
 import { fmtCad } from "../lib/invoiceMath";
 
 export default function InvoicesPage() {
   const [search, setSearch] = useState("");
   const [invoices, setInvoices] = useState([]);
   const [notice, setNotice] = useState("Loading invoices...");
+  const [deleteModal, setDeleteModal] = useState({ open: false, invoice: null });
 
   useEffect(() => {
     async function load() {
@@ -22,6 +24,19 @@ export default function InvoicesPage() {
 
     load();
   }, [search]);
+
+  async function handleDelete() {
+    const target = deleteModal.invoice;
+    setDeleteModal({ open: false, invoice: null });
+    if (!target) return;
+    try {
+      await deleteInvoice(target.id);
+      setInvoices((prev) => prev.filter((inv) => inv.id !== target.id));
+      setNotice("Invoice deleted.");
+    } catch (error) {
+      setNotice(error.message);
+    }
+  }
 
   return (
     <div className="page-container">
@@ -63,11 +78,28 @@ export default function InvoicesPage() {
                 <Printer size={16} aria-hidden="true" />
                 Export PDF
               </button>
+              <button
+                type="button"
+                className="danger with-icon"
+                onClick={() => setDeleteModal({ open: true, invoice })}
+              >
+                <Trash2 size={16} aria-hidden="true" />
+                Delete
+              </button>
             </div>
           </li>
         ))}
       </ul>
     </section>
+    <ConfirmModal
+      open={deleteModal.open}
+      title="Delete invoice"
+      message={`Are you sure you want to delete invoice #${deleteModal.invoice?.invoice_number || ""}? This cannot be undone.`}
+      confirmLabel="Delete"
+      cancelLabel="Cancel"
+      onConfirm={handleDelete}
+      onCancel={() => setDeleteModal({ open: false, invoice: null })}
+    />
     </div>
   );
 }

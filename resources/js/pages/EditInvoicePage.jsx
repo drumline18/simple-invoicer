@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
 import InvoiceEditor from "../components/InvoiceEditor";
 import InvoicePdfPreview from "../components/InvoicePdfPreview";
 import ToastNotice from "../components/ToastNotice";
-import { getInvoice, getSettings, listClients, saveClient, updateInvoice } from "../lib/api";
+import { deleteInvoice, getInvoice, getSettings, listClients, saveClient, updateInvoice } from "../lib/api";
 import { normalizeInvoiceFromApi } from "../lib/invoiceMath";
 
 export default function EditInvoicePage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [invoice, setInvoice] = useState(null);
   const [settings, setSettings] = useState({});
   const [clients, setClients] = useState([]);
@@ -17,6 +18,7 @@ export default function EditInvoicePage() {
   const [noticeTone, setNoticeTone] = useState("info");
   const [toast, setToast] = useState({ open: false, message: "", tone: "info" });
   const [overwriteModal, setOverwriteModal] = useState({ open: false, payload: null });
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const toastTimerRef = useRef(null);
 
   useEffect(() => {
@@ -141,6 +143,16 @@ export default function EditInvoicePage() {
     window.open(`/print/invoice/${id}?autoprint=1`, "_blank", "noopener");
   }
 
+  async function handleDeleteConfirm() {
+    setDeleteModalOpen(false);
+    try {
+      await deleteInvoice(id);
+      navigate("/invoices");
+    } catch (error) {
+      showError(error.message);
+    }
+  }
+
   if (!invoice) {
     return <div className="panel">{notice}</div>;
   }
@@ -152,6 +164,7 @@ export default function EditInvoicePage() {
         onInvoiceChange={setInvoice}
         onSave={handleSave}
         onExport={handleExport}
+        onDelete={() => setDeleteModalOpen(true)}
         mode="edit"
         modeLabel={`Editing invoice #${invoice.invoice_number || id}`}
         saveLabel="Update Invoice"
@@ -168,6 +181,15 @@ export default function EditInvoicePage() {
         tone={toast.tone}
         message={toast.message}
         onClose={closeToast}
+      />
+      <ConfirmModal
+        open={deleteModalOpen}
+        title="Delete invoice"
+        message={`Are you sure you want to delete invoice #${invoice.invoice_number || id}? This cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteModalOpen(false)}
       />
       <ConfirmModal
         open={overwriteModal.open}
