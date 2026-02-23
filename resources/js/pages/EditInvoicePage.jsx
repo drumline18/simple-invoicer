@@ -146,7 +146,7 @@ export default function EditInvoicePage() {
   }
 
   return (
-    <>
+    <div className="page-container-wide">
       <InvoiceEditor
         invoice={invoice}
         onInvoiceChange={setInvoice}
@@ -196,6 +196,6 @@ export default function EditInvoicePage() {
           showInfo("Client save canceled. Invoice was not updated.");
         }}
       />
-    </>
+    </div>
   );
 }

@@ -159,6 +159,18 @@ nav a:hover {
   padding: 1rem;
 }
 
+.page-container {
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.page-container-wide {
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -763,6 +775,67 @@ th {
 
 .settings-panel {
   max-width: 820px;
+}
+
+.quotes-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.quotes-header h2 {
+  margin: 0;
+}
+
+.quotes-result {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.65rem;
+  margin: 0.75rem 0;
+  background: linear-gradient(180deg, #fffcf5, #f8efdf);
+  box-shadow: 0 3px 12px rgba(52, 36, 16, 0.07);
+}
+
+.quotes-result > div {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.22rem 0;
+}
+
+.quotes-result .grand {
+  border-top: 1px solid var(--line);
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  font-size: 1.04rem;
+}
+
+.quotes-actions {
+  justify-content: flex-end;
+}
+
+.quote-toggle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.quote-toggle-row {
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffcf5;
+  padding: 0.5rem 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.quote-toggle-row .taxable-switch {
+  margin: 0;
 }
 
 .clients-form {

@@ -130,6 +130,7 @@ export default function SettingsPage() {
   }
 
   return (
+    <div className="page-container">
     <section className="panel settings-panel">
       <h2>Business settings</h2>
       <form onSubmit={onSubmit}>
@@ -276,5 +277,6 @@ export default function SettingsPage() {
       </form>
       <p className="notice">{notice}</p>
     </section>
+    </div>
   );
 }

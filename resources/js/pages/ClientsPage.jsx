@@ -122,6 +122,7 @@ export default function ClientsPage() {
   }
 
   return (
+    <div className="page-container">
     <section className="panel">
       <h2>Clients</h2>
 
@@ -254,5 +255,6 @@ export default function ClientsPage() {
         onCancel={() => setArchiveModal({ open: false, client: null })}
       />
     </section>
+    </div>
   );
 }

@@ -203,7 +203,7 @@ export default function NewInvoicePage() {
   }
 
   return (
-    <div>
+    <div className="page-container-wide">
       <InvoiceEditor
         invoice={invoice}
         onInvoiceChange={setInvoice}
