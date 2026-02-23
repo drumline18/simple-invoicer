@@ -1,6 +1,28 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FileText, Plus, Printer, Save, StickyNote, Trash2 } from "lucide-react";
-import { fmtCad, recalcInvoice, toNumber } from "../lib/invoiceMath";
+import * as invoiceMath from "../lib/invoiceMath";
+
+function taxConfigFallback(settings = {}) {
+  const tax1Label = String(settings.tax_1_label || "GST").trim();
+  const tax2Label = String(settings.tax_2_label || "QST").trim();
+  const tax1RatePercent = Math.max(0, Number(settings.tax_1_rate ?? 5) || 0);
+  const tax2RatePercent = Math.max(0, Number(settings.tax_2_rate ?? 9.975) || 0);
+
+  return {
+    tax1: {
+      label: tax1Label,
+      ratePercent: tax1RatePercent,
+      rateDecimal: tax1RatePercent / 100,
+      enabled: Boolean(tax1Label) && tax1RatePercent > 0,
+    },
+    tax2: {
+      label: tax2Label,
+      ratePercent: tax2RatePercent,
+      rateDecimal: tax2RatePercent / 100,
+      enabled: Boolean(tax2Label) && tax2RatePercent > 0,
+    },
+  };
+}
 
 function ItemRow({ item, index, onItemChange, onRemoveItem }) {
   return (
@@ -62,13 +84,17 @@ export default function InvoiceEditor({
   notice,
   noticeTone,
   onClear,
+  settings,
   preview,
   clients,
   saveClientForQuickFill,
   onSaveClientForQuickFillChange,
 }) {
   const isEditMode = String(mode || "").toLowerCase() === "edit";
-  const totals = recalcInvoice(invoice.items);
+  const taxConfig = invoiceMath.taxConfigFromSettings
+    ? invoiceMath.taxConfigFromSettings(settings)
+    : taxConfigFallback(settings);
+  const totals = invoiceMath.recalcInvoice(invoice.items, taxConfig);
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
   const [showNotes, setShowNotes] = useState(Boolean(String(invoice.notes || "").trim()));
@@ -152,8 +178,8 @@ export default function InvoiceEditor({
       ...invoice,
       items: invoice.items.map((item) => ({
         ...item,
-        qty: toNumber(item.qty),
-        unitPrice: toNumber(item.unitPrice),
+        qty: invoiceMath.toNumber(item.qty),
+        unitPrice: invoiceMath.toNumber(item.unitPrice),
       })),
     };
     onSave(payload);
@@ -384,10 +410,14 @@ export default function InvoiceEditor({
           </button>
 
           <div className="totals-box">
-            <div><span>Subtotal</span><strong>{fmtCad(totals.subtotal)}</strong></div>
-            <div><span>GST (5%)</span><strong>{fmtCad(totals.gst)}</strong></div>
-            <div><span>QST (9.975%)</span><strong>{fmtCad(totals.qst)}</strong></div>
-            <div className="grand"><span>Total</span><strong>{fmtCad(totals.total)}</strong></div>
+            <div><span>Subtotal</span><strong>{invoiceMath.fmtCad(totals.subtotal)}</strong></div>
+            {taxConfig.tax1.enabled ? (
+              <div><span>{`${taxConfig.tax1.label} (${taxConfig.tax1.ratePercent}%)`}</span><strong>{invoiceMath.fmtCad(totals.gst)}</strong></div>
+            ) : null}
+            {taxConfig.tax2.enabled ? (
+              <div><span>{`${taxConfig.tax2.label} (${taxConfig.tax2.ratePercent}%)`}</span><strong>{invoiceMath.fmtCad(totals.qst)}</strong></div>
+            ) : null}
+            <div className="grand"><span>Total</span><strong>{invoiceMath.fmtCad(totals.total)}</strong></div>
           </div>
 
           <div className="notes-terms-tools">

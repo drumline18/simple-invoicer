@@ -3,13 +3,11 @@
 namespace App\Services;
 
 use App\Models\DailySequence;
+use App\Models\Setting;
 use Illuminate\Support\Facades\DB;
 
 class InvoiceService
 {
-    public const GST_RATE = 0.05;
-    public const QST_RATE = 0.09975;
-
     public function normalizeIssueDate(?string $value): string
     {
         if (! $value) {
@@ -95,10 +93,14 @@ class InvoiceService
 
     public function recalcInvoice(array $items): array
     {
+        $tax = $this->taxConfig();
+        $tax1Rate = $tax['tax_1']['enabled'] ? $tax['tax_1']['rate_decimal'] : 0;
+        $tax2Rate = $tax['tax_2']['enabled'] ? $tax['tax_2']['rate_decimal'] : 0;
+
         $normalized = [];
         $subtotal = 0;
-        $gst = 0;
-        $qst = 0;
+        $tax1 = 0;
+        $tax2 = 0;
 
         foreach (array_values($items) as $position => $item) {
             $qty = max(0, (float) ($item['qty'] ?? 0));
@@ -106,13 +108,13 @@ class InvoiceService
             $taxable = ($item['taxable'] ?? true) !== false;
 
             $lineSubtotal = (int) round($qty * $unitPriceCents);
-            $lineGst = $taxable ? (int) round($lineSubtotal * self::GST_RATE) : 0;
-            $lineQst = $taxable ? (int) round($lineSubtotal * self::QST_RATE) : 0;
-            $lineTotal = $lineSubtotal + $lineGst + $lineQst;
+            $lineTax1 = $taxable ? (int) round($lineSubtotal * $tax1Rate) : 0;
+            $lineTax2 = $taxable ? (int) round($lineSubtotal * $tax2Rate) : 0;
+            $lineTotal = $lineSubtotal + $lineTax1 + $lineTax2;
 
             $subtotal += $lineSubtotal;
-            $gst += $lineGst;
-            $qst += $lineQst;
+            $tax1 += $lineTax1;
+            $tax2 += $lineTax2;
 
             $normalized[] = [
                 'position' => $position,
@@ -121,8 +123,8 @@ class InvoiceService
                 'unit_price_cents' => $unitPriceCents,
                 'taxable' => $taxable,
                 'line_subtotal_cents' => $lineSubtotal,
-                'gst_cents' => $lineGst,
-                'qst_cents' => $lineQst,
+                'gst_cents' => $lineTax1,
+                'qst_cents' => $lineTax2,
                 'line_total_cents' => $lineTotal,
             ];
         }
@@ -130,9 +132,53 @@ class InvoiceService
         return [
             'items' => $normalized,
             'subtotal_cents' => $subtotal,
-            'gst_cents' => $gst,
-            'qst_cents' => $qst,
-            'total_cents' => $subtotal + $gst + $qst,
+            'gst_cents' => $tax1,
+            'qst_cents' => $tax2,
+            'total_cents' => $subtotal + $tax1 + $tax2,
+        ];
+    }
+
+    public function taxConfig(?Setting $settings = null): array
+    {
+        $settings ??= Setting::query()->firstOrCreate(
+            ['id' => 1],
+            [
+                'business_name' => '',
+                'business_email' => '',
+                'business_phone' => '',
+                'business_address' => '',
+                'gst_number' => '',
+                'qst_number' => '',
+                'tax_1_label' => 'GST',
+                'tax_1_rate' => 5,
+                'tax_1_number' => '',
+                'tax_2_label' => 'QST',
+                'tax_2_rate' => 9.975,
+                'tax_2_number' => '',
+                'default_terms' => '',
+            ]
+        );
+
+        $tax1Label = trim((string) ($settings->tax_1_label ?: 'GST'));
+        $tax2Label = trim((string) ($settings->tax_2_label ?: 'QST'));
+        $tax1RatePercent = max(0, (float) ($settings->tax_1_rate ?? 5));
+        $tax2RatePercent = max(0, (float) ($settings->tax_2_rate ?? 9.975));
+
+        return [
+            'tax_1' => [
+                'label' => $tax1Label,
+                'rate_percent' => $tax1RatePercent,
+                'rate_decimal' => $tax1RatePercent / 100,
+                'number' => (string) ($settings->tax_1_number ?: $settings->gst_number ?: ''),
+                'enabled' => $tax1Label !== '' && $tax1RatePercent > 0,
+            ],
+            'tax_2' => [
+                'label' => $tax2Label,
+                'rate_percent' => $tax2RatePercent,
+                'rate_decimal' => $tax2RatePercent / 100,
+                'number' => (string) ($settings->tax_2_number ?: $settings->qst_number ?: ''),
+                'enabled' => $tax2Label !== '' && $tax2RatePercent > 0,
+            ],
         ];
     }
 

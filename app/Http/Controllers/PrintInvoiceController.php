@@ -19,6 +19,9 @@ class PrintInvoiceController extends Controller
 
         $settings = Setting::query()->firstOrCreate(['id' => 1]);
         $language = $service->normalizeLanguage($invoice->language);
+        $tax = $service->taxConfig($settings);
+        $tax1Label = $tax['tax_1']['label'].' ('.$tax['tax_1']['rate_percent'].'%)';
+        $tax2Label = $tax['tax_2']['label'].' ('.$tax['tax_2']['rate_percent'].'%)';
         $labels = $language === 'fr'
             ? [
                 'invoice' => 'Facture',
@@ -31,8 +34,8 @@ class PrintInvoiceController extends Controller
                 'unitCad' => 'Unite (CAD)',
                 'lineTotal' => 'Total ligne',
                 'subtotal' => 'Sous-total',
-                'gst' => 'TPS (5%)',
-                'qst' => 'TVQ (9.975%)',
+                'gst' => $tax1Label,
+                'qst' => $tax2Label,
                 'total' => 'Total',
                 'notes' => 'Notes',
                 'terms' => 'Modalites',
@@ -48,8 +51,8 @@ class PrintInvoiceController extends Controller
                 'unitCad' => 'Unit (CAD)',
                 'lineTotal' => 'Line total',
                 'subtotal' => 'Subtotal',
-                'gst' => 'GST (5%)',
-                'qst' => 'QST (9.975%)',
+                'gst' => $tax1Label,
+                'qst' => $tax2Label,
                 'total' => 'Total',
                 'notes' => 'Notes',
                 'terms' => 'Terms',
@@ -67,6 +70,7 @@ class PrintInvoiceController extends Controller
         return response()->view('print.invoice', [
             'invoice' => $invoice,
             'settings' => $settings,
+            'tax' => $tax,
             'labels' => $labels,
             'rows' => $rows,
             'subtotal' => $service->dollarsFromCents((int) $invoice->subtotal_cents),

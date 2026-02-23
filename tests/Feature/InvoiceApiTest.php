@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\DailySequence;
+use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -134,5 +135,31 @@ class InvoiceApiTest extends TestCase
 
         $this->assertDatabaseMissing('invoices', ['id' => $invoiceId]);
         $this->assertDatabaseMissing('invoice_items', ['invoice_id' => $invoiceId]);
+    }
+
+    public function test_tax_calculation_uses_configured_rates(): void
+    {
+        Setting::query()->create([
+            'id' => 1,
+            'tax_1_label' => 'HST',
+            'tax_1_rate' => 13,
+            'tax_2_label' => '',
+            'tax_2_rate' => 0,
+        ]);
+
+        $response = $this->postJson('/api/invoices', [
+            'invoice_number' => 'ON-1',
+            'language' => 'en',
+            'issue_date' => '2026-02-22',
+            'items' => [
+                ['description' => 'Taxable item', 'qty' => 1, 'unitPrice' => 100, 'taxable' => true],
+            ],
+        ]);
+
+        $response->assertCreated()
+            ->assertJsonPath('subtotal', '100.00')
+            ->assertJsonPath('gst', '13.00')
+            ->assertJsonPath('qst', '0.00')
+            ->assertJsonPath('total', '113.00');
     }
 }

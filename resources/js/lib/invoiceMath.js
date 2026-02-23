@@ -1,19 +1,43 @@
-export const GST_RATE = 0.05;
-export const QST_RATE = 0.09975;
+const DEFAULT_TAX_1 = { label: "GST", ratePercent: 5, number: "" };
+const DEFAULT_TAX_2 = { label: "QST", ratePercent: 9.975, number: "" };
 
 export function toNumber(value) {
   const n = Number(value);
   return Number.isFinite(n) ? n : 0;
 }
 
-export function recalcInvoice(items) {
+export function taxConfigFromSettings(settings = {}) {
+  const tax1Label = String(settings.tax_1_label || DEFAULT_TAX_1.label).trim();
+  const tax2Label = String(settings.tax_2_label || DEFAULT_TAX_2.label).trim();
+  const tax1RatePercent = Math.max(0, toNumber(settings.tax_1_rate ?? DEFAULT_TAX_1.ratePercent));
+  const tax2RatePercent = Math.max(0, toNumber(settings.tax_2_rate ?? DEFAULT_TAX_2.ratePercent));
+
+  return {
+    tax1: {
+      label: tax1Label,
+      ratePercent: tax1RatePercent,
+      rateDecimal: tax1RatePercent / 100,
+      number: String(settings.tax_1_number || settings.gst_number || DEFAULT_TAX_1.number || ""),
+      enabled: Boolean(tax1Label) && tax1RatePercent > 0,
+    },
+    tax2: {
+      label: tax2Label,
+      ratePercent: tax2RatePercent,
+      rateDecimal: tax2RatePercent / 100,
+      number: String(settings.tax_2_number || settings.qst_number || DEFAULT_TAX_2.number || ""),
+      enabled: Boolean(tax2Label) && tax2RatePercent > 0,
+    },
+  };
+}
+
+export function recalcInvoice(items, taxConfig = taxConfigFromSettings()) {
   const normalizedItems = (items || []).map((item) => {
     const qty = toNumber(item.qty);
     const unitPrice = toNumber(item.unitPrice);
     const taxable = item.taxable !== false;
     const lineSubtotal = qty * unitPrice;
-    const gst = taxable ? lineSubtotal * GST_RATE : 0;
-    const qst = taxable ? lineSubtotal * QST_RATE : 0;
+    const gst = taxable && taxConfig.tax1.enabled ? lineSubtotal * taxConfig.tax1.rateDecimal : 0;
+    const qst = taxable && taxConfig.tax2.enabled ? lineSubtotal * taxConfig.tax2.rateDecimal : 0;
     return {
       ...item,
       qty,
@@ -30,6 +54,7 @@ export function recalcInvoice(items) {
   const gst = normalizedItems.reduce((sum, item) => sum + item.gst, 0);
   const qst = normalizedItems.reduce((sum, item) => sum + item.qst, 0);
   return {
+    taxConfig,
     items: normalizedItems,
     subtotal,
     gst,

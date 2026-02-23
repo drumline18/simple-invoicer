@@ -37,8 +37,12 @@
         <p>{{ $settings->business_address }}</p>
         <p>{{ $settings->business_email }}</p>
         <p>{{ $settings->business_phone }}</p>
-        <p class="small">GST: {{ $settings->gst_number }}</p>
-        <p class="small">QST: {{ $settings->qst_number }}</p>
+        @if($tax['tax_1']['enabled'])
+            <p class="small">{{ $tax['tax_1']['label'] }}: {{ $tax['tax_1']['number'] }}</p>
+        @endif
+        @if($tax['tax_2']['enabled'])
+            <p class="small">{{ $tax['tax_2']['label'] }}: {{ $tax['tax_2']['number'] }}</p>
+        @endif
     </div>
     <div class="card">
         <h2>{{ $labels['billTo'] }}</h2>
@@ -72,8 +76,12 @@
 
 <div class="totals">
     <div class="totals-row"><span>{{ $labels['subtotal'] }}</span><span>${{ $subtotal }}</span></div>
-    <div class="totals-row"><span>{{ $labels['gst'] }}</span><span>${{ $gst }}</span></div>
-    <div class="totals-row"><span>{{ $labels['qst'] }}</span><span>${{ $qst }}</span></div>
+    @if($tax['tax_1']['enabled'])
+        <div class="totals-row"><span>{{ $labels['gst'] }}</span><span>${{ $gst }}</span></div>
+    @endif
+    @if($tax['tax_2']['enabled'])
+        <div class="totals-row"><span>{{ $labels['qst'] }}</span><span>${{ $qst }}</span></div>
+    @endif
     <div class="totals-row grand"><span>{{ $labels['total'] }}</span><span>${{ $total }}</span></div>
 </div>
 

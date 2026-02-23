@@ -18,6 +18,12 @@ class Setting extends Model
         'business_address',
         'gst_number',
         'qst_number',
+        'tax_1_label',
+        'tax_1_rate',
+        'tax_1_number',
+        'tax_2_label',
+        'tax_2_rate',
+        'tax_2_number',
         'default_terms',
     ];
 }

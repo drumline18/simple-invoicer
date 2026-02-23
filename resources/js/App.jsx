@@ -34,7 +34,7 @@ export default function App() {
           </div>
           <div>
             <h1>Simple Invoicer</h1>
-            <p>Local-only invoices in CAD with GST/QST.</p>
+            <p>Local-only invoices in CAD with configurable Canadian sales taxes.</p>
           </div>
         </div>
         <nav>

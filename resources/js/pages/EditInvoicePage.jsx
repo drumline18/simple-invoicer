@@ -157,6 +157,7 @@ export default function EditInvoicePage() {
         saveLabel="Update Invoice"
         notice={notice}
         noticeTone={noticeTone}
+        settings={settings}
         preview={preview}
         clients={clients}
         saveClientForQuickFill={saveClientForQuickFill}

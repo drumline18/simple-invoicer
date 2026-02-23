@@ -212,6 +212,7 @@ export default function NewInvoicePage() {
         saveLabel={savedId ? "Update Invoice" : "Save Invoice"}
         notice={notice}
         noticeTone={noticeTone}
+        settings={settings}
         preview={preview}
         clients={clients}
         saveClientForQuickFill={saveClientForQuickFill}

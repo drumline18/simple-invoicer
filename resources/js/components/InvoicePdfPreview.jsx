@@ -1,5 +1,28 @@
-const GST_RATE = 0.05;
-const QST_RATE = 0.09975;
+import * as invoiceMath from "../lib/invoiceMath";
+
+function taxConfigFallback(settings = {}) {
+  const tax1Label = String(settings.tax_1_label || "GST").trim();
+  const tax2Label = String(settings.tax_2_label || "QST").trim();
+  const tax1RatePercent = Math.max(0, Number(settings.tax_1_rate ?? 5) || 0);
+  const tax2RatePercent = Math.max(0, Number(settings.tax_2_rate ?? 9.975) || 0);
+
+  return {
+    tax1: {
+      label: tax1Label,
+      ratePercent: tax1RatePercent,
+      rateDecimal: tax1RatePercent / 100,
+      number: String(settings.tax_1_number || settings.gst_number || ""),
+      enabled: Boolean(tax1Label) && tax1RatePercent > 0,
+    },
+    tax2: {
+      label: tax2Label,
+      ratePercent: tax2RatePercent,
+      rateDecimal: tax2RatePercent / 100,
+      number: String(settings.tax_2_number || settings.qst_number || ""),
+      enabled: Boolean(tax2Label) && tax2RatePercent > 0,
+    },
+  };
+}
 
 function centsFromNumber(value) {
   const n = Number(value || 0);
@@ -10,14 +33,18 @@ function moneyFromCents(cents) {
   return `$${(Number(cents || 0) / 100).toFixed(2)}`;
 }
 
-function recalcLikeServer(items) {
+function recalcLikeServer(items, taxConfig) {
   const normalizedItems = (items || []).map((item) => {
     const qty = Number(item.qty || 0);
     const unitPriceCents = centsFromNumber(item.unitPrice);
     const taxable = item.taxable !== false;
     const lineSubtotalCents = Math.round(qty * unitPriceCents);
-    const gstCents = taxable ? Math.round(lineSubtotalCents * GST_RATE) : 0;
-    const qstCents = taxable ? Math.round(lineSubtotalCents * QST_RATE) : 0;
+    const gstCents = taxable && taxConfig.tax1.enabled
+      ? Math.round(lineSubtotalCents * taxConfig.tax1.rateDecimal)
+      : 0;
+    const qstCents = taxable && taxConfig.tax2.enabled
+      ? Math.round(lineSubtotalCents * taxConfig.tax2.rateDecimal)
+      : 0;
     return {
       description: item.description || "",
       qty,
@@ -46,7 +73,9 @@ function line(text) {
   return text || "\u00a0";
 }
 
-function labelsForLanguage(language) {
+function labelsForLanguage(language, taxConfig) {
+  const tax1Label = `${taxConfig.tax1.label} (${taxConfig.tax1.ratePercent}%)`;
+  const tax2Label = `${taxConfig.tax2.label} (${taxConfig.tax2.ratePercent}%)`;
   if (String(language || "").toLowerCase() === "fr") {
     return {
       invoice: "Facture",
@@ -59,8 +88,8 @@ function labelsForLanguage(language) {
       unitCad: "Unite (CAD)",
       lineTotal: "Total ligne",
       subtotal: "Sous-total",
-      gst: "TPS (5%)",
-      qst: "TVQ (9.975%)",
+      gst: tax1Label,
+      qst: tax2Label,
       total: "Total",
       notes: "Notes",
       terms: "Modalites",
@@ -78,8 +107,8 @@ function labelsForLanguage(language) {
     unitCad: "Unit (CAD)",
     lineTotal: "Line total",
     subtotal: "Subtotal",
-    gst: "GST (5%)",
-    qst: "QST (9.975%)",
+    gst: tax1Label,
+    qst: tax2Label,
     total: "Total",
     notes: "Notes",
     terms: "Terms",
@@ -87,10 +116,13 @@ function labelsForLanguage(language) {
 }
 
 export default function InvoicePdfPreview({ invoice, settings }) {
-  const totals = recalcLikeServer(invoice.items);
+  const taxConfig = invoiceMath.taxConfigFromSettings
+    ? invoiceMath.taxConfigFromSettings(settings)
+    : taxConfigFallback(settings);
+  const totals = recalcLikeServer(invoice.items, taxConfig);
   const hasNotes = Boolean((invoice.notes || "").trim());
   const hasTerms = Boolean((invoice.terms || "").trim());
-  const labels = labelsForLanguage(invoice.language);
+  const labels = labelsForLanguage(invoice.language, taxConfig);
 
   return (
     <div className="preview-sheet">
@@ -107,8 +139,12 @@ export default function InvoicePdfPreview({ invoice, settings }) {
           <p>{line(settings.business_address)}</p>
           <p>{line(settings.business_email)}</p>
           <p>{line(settings.business_phone)}</p>
-          <p className="preview-small">GST: {line(settings.gst_number)}</p>
-          <p className="preview-small">QST: {line(settings.qst_number)}</p>
+          {taxConfig.tax1.enabled ? (
+            <p className="preview-small">{taxConfig.tax1.label}: {line(taxConfig.tax1.number)}</p>
+          ) : null}
+          {taxConfig.tax2.enabled ? (
+            <p className="preview-small">{taxConfig.tax2.label}: {line(taxConfig.tax2.number)}</p>
+          ) : null}
         </section>
         <section className="preview-card">
           <h2>{labels.billTo}</h2>
@@ -142,8 +178,12 @@ export default function InvoicePdfPreview({ invoice, settings }) {
 
       <div className="preview-totals">
         <div className="preview-totals-row"><span>{labels.subtotal}</span><span>{moneyFromCents(totals.subtotalCents)}</span></div>
-        <div className="preview-totals-row"><span>{labels.gst}</span><span>{moneyFromCents(totals.gstCents)}</span></div>
-        <div className="preview-totals-row"><span>{labels.qst}</span><span>{moneyFromCents(totals.qstCents)}</span></div>
+        {taxConfig.tax1.enabled ? (
+          <div className="preview-totals-row"><span>{labels.gst}</span><span>{moneyFromCents(totals.gstCents)}</span></div>
+        ) : null}
+        {taxConfig.tax2.enabled ? (
+          <div className="preview-totals-row"><span>{labels.qst}</span><span>{moneyFromCents(totals.qstCents)}</span></div>
+        ) : null}
         <div className="preview-totals-row grand"><span>{labels.total}</span><span>{moneyFromCents(totals.totalCents)}</span></div>
       </div>
 

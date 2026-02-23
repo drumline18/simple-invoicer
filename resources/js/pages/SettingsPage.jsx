@@ -2,6 +2,69 @@ import { useEffect, useState } from "react";
 import { Save } from "lucide-react";
 import { getSettings, saveSettings } from "../lib/api";
 
+const TAX_PRESETS = {
+  AB: {
+    tax_1_label: "GST",
+    tax_1_rate: 5,
+    tax_2_label: "",
+    tax_2_rate: 0,
+  },
+  BC: {
+    tax_1_label: "GST",
+    tax_1_rate: 5,
+    tax_2_label: "PST",
+    tax_2_rate: 7,
+  },
+  MB: {
+    tax_1_label: "GST",
+    tax_1_rate: 5,
+    tax_2_label: "RST",
+    tax_2_rate: 7,
+  },
+  NB: {
+    tax_1_label: "HST",
+    tax_1_rate: 15,
+    tax_2_label: "",
+    tax_2_rate: 0,
+  },
+  NL: {
+    tax_1_label: "HST",
+    tax_1_rate: 15,
+    tax_2_label: "",
+    tax_2_rate: 0,
+  },
+  NS: {
+    tax_1_label: "HST",
+    tax_1_rate: 15,
+    tax_2_label: "",
+    tax_2_rate: 0,
+  },
+  ON: {
+    tax_1_label: "HST",
+    tax_1_rate: 13,
+    tax_2_label: "",
+    tax_2_rate: 0,
+  },
+  PE: {
+    tax_1_label: "HST",
+    tax_1_rate: 15,
+    tax_2_label: "",
+    tax_2_rate: 0,
+  },
+  QC: {
+    tax_1_label: "GST",
+    tax_1_rate: 5,
+    tax_2_label: "QST",
+    tax_2_rate: 9.975,
+  },
+  SK: {
+    tax_1_label: "GST",
+    tax_1_rate: 5,
+    tax_2_label: "PST",
+    tax_2_rate: 6,
+  },
+};
+
 const INITIAL_SETTINGS = {
   business_name: "",
   business_email: "",
@@ -9,6 +72,12 @@ const INITIAL_SETTINGS = {
   business_address: "",
   gst_number: "",
   qst_number: "",
+  tax_1_label: "GST",
+  tax_1_rate: 5,
+  tax_1_number: "",
+  tax_2_label: "QST",
+  tax_2_rate: 9.975,
+  tax_2_number: "",
   default_terms: "",
 };
 
@@ -31,6 +100,21 @@ export default function SettingsPage() {
 
   function updateField(field, value) {
     setSettings((prev) => ({ ...prev, [field]: value }));
+  }
+
+  function applyTaxPreset(code) {
+    const preset = TAX_PRESETS[code];
+    if (!preset) {
+      return;
+    }
+    setSettings((prev) => ({
+      ...prev,
+      tax_1_label: preset.tax_1_label,
+      tax_1_rate: preset.tax_1_rate,
+      tax_2_label: preset.tax_2_label,
+      tax_2_rate: preset.tax_2_rate,
+    }));
+    setNotice(`Applied ${code} tax preset. You can still edit manually.`);
   }
 
   async function onSubmit(event) {
@@ -80,24 +164,85 @@ export default function SettingsPage() {
             onChange={(event) => updateField("business_address", event.target.value)}
           />
         </label>
-        <div className="form-grid two">
+        <fieldset className="form-section">
+          <legend>Tax settings</legend>
           <label>
-            GST number
+            Province preset
+            <select defaultValue="" onChange={(event) => applyTaxPreset(event.target.value)}>
+              <option value="" disabled>Select province preset</option>
+              <option value="AB">Alberta</option>
+              <option value="BC">British Columbia</option>
+              <option value="MB">Manitoba</option>
+              <option value="NB">New Brunswick</option>
+              <option value="NL">Newfoundland and Labrador</option>
+              <option value="NS">Nova Scotia</option>
+              <option value="ON">Ontario</option>
+              <option value="PE">Prince Edward Island</option>
+              <option value="QC">Quebec</option>
+              <option value="SK">Saskatchewan</option>
+            </select>
+          </label>
+
+          <div className="form-grid two">
+            <label>
+              Tax 1 label
+              <input
+                type="text"
+                value={settings.tax_1_label}
+                onChange={(event) => updateField("tax_1_label", event.target.value)}
+              />
+            </label>
+            <label>
+              Tax 1 rate (%)
+              <input
+                type="number"
+                min="0"
+                step="0.001"
+                value={settings.tax_1_rate}
+                onChange={(event) => updateField("tax_1_rate", event.target.value)}
+              />
+            </label>
+          </div>
+
+          <label>
+            Tax 1 registration number
             <input
               type="text"
-              value={settings.gst_number}
-              onChange={(event) => updateField("gst_number", event.target.value)}
+              value={settings.tax_1_number}
+              onChange={(event) => updateField("tax_1_number", event.target.value)}
             />
           </label>
+
+          <div className="form-grid two">
+            <label>
+              Tax 2 label
+              <input
+                type="text"
+                value={settings.tax_2_label}
+                onChange={(event) => updateField("tax_2_label", event.target.value)}
+              />
+            </label>
+            <label>
+              Tax 2 rate (%)
+              <input
+                type="number"
+                min="0"
+                step="0.001"
+                value={settings.tax_2_rate}
+                onChange={(event) => updateField("tax_2_rate", event.target.value)}
+              />
+            </label>
+          </div>
+
           <label>
-            QST number
+            Tax 2 registration number
             <input
               type="text"
-              value={settings.qst_number}
-              onChange={(event) => updateField("qst_number", event.target.value)}
+              value={settings.tax_2_number}
+              onChange={(event) => updateField("tax_2_number", event.target.value)}
             />
           </label>
-        </div>
+        </fieldset>
         <label>
           Default terms
           <textarea
