@@ -11,7 +11,7 @@ class InvoiceService
     public function normalizeIssueDate(?string $value): string
     {
         if (! $value) {
-            return now()->toDateString();
+            return now($this->businessTimezone())->toDateString();
         }
 
         return substr((string) $value, 0, 10);
@@ -147,6 +147,7 @@ class InvoiceService
                 'business_email' => '',
                 'business_phone' => '',
                 'business_address' => '',
+                'timezone' => 'America/Toronto',
                 'gst_number' => '',
                 'qst_number' => '',
                 'tax_1_label' => 'GST',
@@ -180,6 +181,32 @@ class InvoiceService
                 'enabled' => $tax2Label !== '' && $tax2RatePercent > 0,
             ],
         ];
+    }
+
+    public function businessTimezone(?Setting $settings = null): string
+    {
+        $settings ??= Setting::query()->firstOrCreate(['id' => 1], [
+            'business_name' => '',
+            'business_email' => '',
+            'business_phone' => '',
+            'business_address' => '',
+            'timezone' => 'America/Toronto',
+            'gst_number' => '',
+            'qst_number' => '',
+            'tax_1_label' => 'GST',
+            'tax_1_rate' => 5,
+            'tax_1_number' => '',
+            'tax_2_label' => 'QST',
+            'tax_2_rate' => 9.975,
+            'tax_2_number' => '',
+            'default_terms' => '',
+        ]);
+
+        $timezone = (string) ($settings->timezone ?? 'America/Toronto');
+
+        return in_array($timezone, timezone_identifiers_list(), true)
+            ? $timezone
+            : 'America/Toronto';
     }
 
     public function centsFromNumber(mixed $value): int

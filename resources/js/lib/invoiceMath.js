@@ -70,18 +70,56 @@ export function fmtCad(amount) {
   }).format(amount || 0);
 }
 
-export function todayIsoDate() {
-  return new Date().toISOString().slice(0, 10);
+function localIsoDate(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function isoDateForTimeZone(timeZone) {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const parts = formatter.formatToParts(new Date());
+  const year = parts.find((part) => part.type === "year")?.value;
+  const month = parts.find((part) => part.type === "month")?.value;
+  const day = parts.find((part) => part.type === "day")?.value;
+
+  if (!year || !month || !day) {
+    return localIsoDate(new Date());
+  }
+
+  return `${year}-${month}-${day}`;
+}
+
+export function todayIsoDate(timeZone) {
+  if (typeof timeZone === "string" && timeZone.trim()) {
+    try {
+      return isoDateForTimeZone(timeZone.trim());
+    } catch {
+      return localIsoDate(new Date());
+    }
+  }
+
+  return localIsoDate(new Date());
 }
 
 export function addDays(isoDate, days) {
-  const d = new Date(`${isoDate}T00:00:00`);
-  d.setDate(d.getDate() + days);
+  const [year, month, day] = String(isoDate || "").split("-").map((part) => Number(part));
+  const safeYear = Number.isFinite(year) ? year : 1970;
+  const safeMonth = Number.isFinite(month) ? month : 1;
+  const safeDay = Number.isFinite(day) ? day : 1;
+  const d = new Date(Date.UTC(safeYear, safeMonth - 1, safeDay));
+  d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10);
 }
 
-export function emptyInvoice() {
-  const issueDate = todayIsoDate();
+export function emptyInvoice(timeZone) {
+  const issueDate = todayIsoDate(timeZone);
   return {
     invoice_number: "",
     language: "en",

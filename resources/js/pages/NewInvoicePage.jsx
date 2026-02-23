@@ -12,7 +12,7 @@ import {
   saveClient,
   updateInvoice,
 } from "../lib/api";
-import { emptyInvoice } from "../lib/invoiceMath";
+import { addDays, emptyInvoice, todayIsoDate } from "../lib/invoiceMath";
 
 export default function NewInvoicePage() {
   const navigate = useNavigate();
@@ -81,9 +81,12 @@ export default function NewInvoicePage() {
         ]);
         setSettings(nextSettings);
         setClients(nextClients);
-        const nextNumber = await getNextInvoiceNumber(invoice.issue_date);
+        const defaultIssueDate = todayIsoDate(nextSettings.timezone);
+        const nextNumber = await getNextInvoiceNumber(defaultIssueDate);
         setInvoice((prev) => ({
           ...prev,
+          issue_date: defaultIssueDate,
+          due_date: addDays(defaultIssueDate, 30),
           invoice_number: nextNumber,
           terms: prev.terms || nextSettings.default_terms || "",
         }));
@@ -186,7 +189,7 @@ export default function NewInvoicePage() {
   }
 
   async function startFresh() {
-    const fresh = emptyInvoice();
+    const fresh = emptyInvoice(settings.timezone);
     const nextNumber = await getNextInvoiceNumber(fresh.issue_date).catch(() => "");
     setSavedId(null);
     setSaveClientForQuickFill(false);

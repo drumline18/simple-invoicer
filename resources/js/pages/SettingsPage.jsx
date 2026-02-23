@@ -70,6 +70,7 @@ const INITIAL_SETTINGS = {
   business_email: "",
   business_phone: "",
   business_address: "",
+  timezone: "America/Toronto",
   gst_number: "",
   qst_number: "",
   tax_1_label: "GST",
@@ -163,6 +164,23 @@ export default function SettingsPage() {
             value={settings.business_address}
             onChange={(event) => updateField("business_address", event.target.value)}
           />
+        </label>
+        <label>
+          Business timezone
+          <select
+            value={settings.timezone || "America/Toronto"}
+            onChange={(event) => updateField("timezone", event.target.value)}
+          >
+            <option value="America/St_Johns">Newfoundland (America/St_Johns)</option>
+            <option value="America/Halifax">Atlantic (America/Halifax)</option>
+            <option value="America/Toronto">Eastern (America/Toronto)</option>
+            <option value="America/Winnipeg">Central (America/Winnipeg)</option>
+            <option value="America/Edmonton">Mountain (America/Edmonton)</option>
+            <option value="America/Vancouver">Pacific (America/Vancouver)</option>
+            <option value="America/Whitehorse">Yukon (America/Whitehorse)</option>
+            <option value="America/Yellowknife">Northwest Territories (America/Yellowknife)</option>
+            <option value="America/Iqaluit">Nunavut (America/Iqaluit)</option>
+          </select>
         </label>
         <fieldset className="form-section">
           <legend>Tax settings</legend>

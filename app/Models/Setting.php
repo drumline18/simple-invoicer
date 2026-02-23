@@ -16,6 +16,7 @@ class Setting extends Model
         'business_email',
         'business_phone',
         'business_address',
+        'timezone',
         'gst_number',
         'qst_number',
         'tax_1_label',
