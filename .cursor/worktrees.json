@@ -1,0 +1,10 @@
+{
+  "setup-worktree": [
+    "[ -f .env ] || cp .env.example .env",
+    "composer install",
+    "npm install",
+    "[ -f database/database.sqlite ] || mkdir -p database && touch database/database.sqlite",
+    "php artisan key:generate --force",
+    "php artisan migrate --force"
+  ]
+}
